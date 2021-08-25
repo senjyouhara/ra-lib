@@ -57,8 +57,7 @@ function getTip(tip, key) {
 // @ts-ignore
 function createStoreByModels(models, options): any {
     if (!models) {
-        console.error('models mast be an object!');
-        return;
+        throw new Error('models mast be an object!');
     }
 
     const {
@@ -234,10 +233,8 @@ function createStoreByModels(models, options): any {
 
                                     if (showSuccessTip) onSuccess({ data: nextState, tip: getTip(successTip, key), from: 'model' });
                                 } catch (err) {
-                                    if (showErrorTip) {
-                                        onError({ error: err, tip: getTip(errorTip, key), from: 'model' });
-                                        return state;
-                                    }
+                                    if (showErrorTip) onError({ error: err, tip: getTip(errorTip, key), from: 'model' });
+
                                     throw err;
                                 }
 
@@ -343,12 +340,9 @@ function createStoreByModels(models, options): any {
         deserialize,
     }));
 
-    const composeEnhancers =
-        typeof window === "object" && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-            ? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-                // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
-            })
-            : compose
+    // redux devtools 支持
+    // https://github.com/zalmoxisus/redux-devtools-extension
+    const composeEnhancers = (typeof window !== 'undefined' && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
     // 异步需要中间件
     middlewares.push(thunk);

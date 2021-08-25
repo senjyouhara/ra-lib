@@ -45,37 +45,15 @@ if (!Promise.prototype.done) {
     };
 }
 
-if (!Promise.prototype.allSettled) {
-    Promise.allSettled = function(promises) {
-        return new Promise(function(resolve, reject) {
-            if (!Array.isArray(promises)) {
-                return reject(
-                    new TypeError("arguments must be an array")
-                );
-            }
-            var resolvedCounter = 0;
-            var promiseNum = promises.length;
-            var resolvedValues = new Array(promiseNum);
-            for (var i = 0; i < promiseNum; i++) {
-                (function(i) {
-                    Promise.resolve(promises[i]).then(
-                        function(value) {
-                            resolvedCounter++;
-                            resolvedValues[i] = value;
-                            if (resolvedCounter == promiseNum) {
-                                return resolve(resolvedValues);
-                            }
-                        },
-                        function(reason) {
-                            resolvedCounter++;
-                            resolvedValues[i] = reason;
-                            if (resolvedCounter == promiseNum) {
-                                return reject(reason);
-                            }
-                        }
-                    );
-                })(i);
-            }
-        });
-    };
+if (!Promise.allSettled) {
+    Promise.allSettled = (promises) => Promise.all(promises.map(p => p
+        .then(value => ({
+            status: 'fulfilled',
+            value,
+        }))
+        .catch(reason => ({
+            status: 'rejected',
+            reason,
+        })),
+    ));
 }

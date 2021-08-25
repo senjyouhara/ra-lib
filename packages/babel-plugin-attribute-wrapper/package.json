@@ -1,11 +1,11 @@
 {
     "name": "@ra-lib/babel-plugin-attribute-wrapper",
-    "version": "0.0.8",
+    "version": "0.0.16",
     "main": "lib/index.js",
     "module": "es/index.js",
     "scripts": {
         "build": "father-build",
         "test": "node src/test.js"
     },
-    "gitHead": "1ce644163a30feaab7ad8b5a4cc247b30a657cea"
+    "gitHead": "23a6ba08ab35efae898bb1caee2ea2cc723ae22d"
 }
