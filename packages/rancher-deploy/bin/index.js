@@ -159,12 +159,8 @@ async function modifyJobConfig(options) {
  * @returns {*}
  */
 function getGitUrl() {
-    let gitConfigPath;
-    if (fs.existsSync(path.join(__cwd, '.git'))) {
-        gitConfigPath = path.join(__cwd, '.git', 'config');
-    } else {
-        gitConfigPath = path.join(__cwd, '..', '.git', 'config');
-    }
+    const gitRoot = getGitRoot();
+    const gitConfigPath = path.join(gitRoot, '.git', 'config');
     const configContent = fs.readFileSync(gitConfigPath, 'UTF-8');
 
     const arr = configContent.split('\n\t');
@@ -173,16 +169,36 @@ function getGitUrl() {
 }
 
 /**
+ * 获取git根目录
+ * @returns {string}
+ */
+function getGitRoot() {
+    let rootPath = __cwd;
+
+    while (rootPath) {
+        if (fs.existsSync(path.join(rootPath, '.git'))) {
+            break;
+        }
+        const paths = rootPath.split(path.sep);
+        rootPath = paths.slice(0, paths.length - 1).join(path.sep);
+    }
+
+    if (rootPath) return rootPath;
+
+    throw new Error('非git仓库，或 非仓库中子文件夹');
+}
+
+/**
  * 获取前端在仓库中的文件夹
  */
 function getFrontFolder() {
-    // 仓库直接就是前端项目
-    if (fs.existsSync(path.join(__cwd, '.git'))) return '.';
+    const gitRoot = getGitRoot();
 
-    // 前端作为仓库的子文件夹
-    if (fs.existsSync(path.join(__cwd, '..', '.git'))) return __cwd.split(path.sep).pop();
+    if (gitRoot === __cwd) return '.';
 
-    throw new Error('非git仓库，或 非仓库中直接子文件夹');
+    if (gitRoot) {
+        return path.relative(gitRoot, __cwd).split(path.sep).join('/'); // 服务器是linux，直接改成 '/'
+    }
 }
 
 function getGitBranch() {

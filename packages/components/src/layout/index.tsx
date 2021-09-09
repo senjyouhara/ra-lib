@@ -230,6 +230,7 @@ const Layout = forwardRef<any, LayoutProps>((props, ref) => {
     if (layoutType === LAYOUT_TYPE.TOP_MENU) showSide = false;
 
     selectedMenuPath = selectedMenuPath || (hashRouter ? window.location.hash.replace('#', '').split('?')[0] : window.location.pathname);
+    if (baseName) selectedMenuPath = selectedMenuPath.replace(baseName, '');
 
     const keepAlivePagesRef = useRef(null);
     const tabsRef = useRef(persistTab && JSON.parse(window.localStorage.getItem('layout-tabs')) || []);
@@ -408,6 +409,7 @@ const Layout = forwardRef<any, LayoutProps>((props, ref) => {
                         persistTab={persistTab}
                         keepPageAlive={keepPageAlive}
                         hashRouter={hashRouter}
+                        baseName={baseName}
                     />
                 ) : null}
                 {showPageHeader ? (
@@ -467,7 +469,6 @@ Layout.defaultProps = {
     persistTab: true,
     tabHeight: 40,
     menus: [],
-    collectedMenus: [],
     onMenuCollect: () => undefined,
     layoutType: LAYOUT_TYPE.SIDE_MENU,
     keepPageAlive: false,
