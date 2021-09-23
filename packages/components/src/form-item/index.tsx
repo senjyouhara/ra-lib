@@ -59,14 +59,14 @@ export interface ItemProps extends FormItemProps {
     minLength?: number, // 允许输入最小字符数
     // type: PropTypes.oneOf(formElementTypes.map(item => item.type)),
     type?: ItemType,
-    children?: ReactChildren,
+    children?: ReactChildren | ReactNode,
     noSpace?: boolean,
     dateFormat?: dateFormatType,
 
     // 其他为Element 属性
     style?: CSSProperties,
     placeholder?: any,
-    options?: [],
+    options?: any,
     treeData?: [],
     onChange?: () => void,
     onSelect?: () => void,
@@ -83,6 +83,13 @@ export interface ItemProps extends FormItemProps {
     // switch
     checkedChildren?: ReactNode,
     unCheckedChildren?: ReactNode,
+
+
+    // 允许任意属性 会导致 IDE 提示失效
+    // declare const FormItem: React.ForwardRefExoticComponent<Pick<ItemProps, string | number> & React.RefAttributes<any>>;
+    // [propName: string]: any;
+
+    // declare const FormItem: React.ForwardRefExoticComponent<ItemProps & React.RefAttributes<any>>;
 }
 
 const { Item } = Form;
@@ -143,7 +150,7 @@ const FormItem = forwardRef<any, ItemProps>((props, ref) => {
     // 处理校验规则
     const rules = getRules({ type, ...props, placeholder });
 
-    if (type === 'switch' && !valuePropName) valuePropName = 'checked';
+    if (['switch', 'checkbox'].includes(type) && !valuePropName) valuePropName = 'checked';
 
     const elementProps = {
         type,
