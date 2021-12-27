@@ -1,9 +1,10 @@
 {
     "name": "@ra-lib/util",
-    "version": "0.1.21",
+    "version": "0.1.23",
     "description": "常用工具函数 封装",
     "main": "lib/index.js",
     "module": "es/index.js",
+    "typings": "lib/index.d.ts",
     "scripts": {
         "build": "father-build",
         "test": "echo \"Error: no test specified\" && exit 1"
